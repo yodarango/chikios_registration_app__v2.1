@@ -1,6 +1,8 @@
 <script lang="ts">
   // svelte
   import { onMount } from "svelte";
+  import { createEventDispatcher } from "svelte";
+  const dispatch = createEventDispatcher();
 
   // types
   type TdisplayStatus = {
@@ -8,6 +10,9 @@
     second: string;
     third: string;
   };
+
+  // helpers
+  import { postReq } from "../../helpers/post_request";
 
   // props
   export let currentTitle: string = "child";
@@ -34,9 +39,11 @@
 
   // DOM Refs
   let inputs: any;
+  let form: any;
 
   onMount(() => {
     inputs = document.getElementsByTagName("input");
+    form = document.getElementById("form");
   });
 
   // --------- chnage the title of the current form section
@@ -99,14 +106,26 @@
   };
 
   // ----------- handle form submission and child registration
-  const handleFormSubmission = () => {
-    const formData = {};
+  const handleFormSubmission = async () => {
+    const formData = { first_name: "" };
     for (let i = 0; i < inputs.length; i++) {
       if (!inputs[i].value) {
         alert(`${inputs[i].placeholder} is required`);
         return;
       }
       formData[inputs[i].name] = inputs[i].value;
+    }
+    const response = await postReq(
+      "http://localhost:4000/kids/register",
+      formData,
+      true
+    );
+
+    if (response.id) {
+      formData["id"] = response.id;
+      dispatch("registration_success", formData);
+      currentTitle = formData.first_name;
+      console.log(response);
     }
   };
 </script>
@@ -118,13 +137,14 @@
     <div
       class="form-section-wrapper initial {currenstSectionClass} {displayStatus.first}"
     >
-      <TextInput placeholder="first name" req={true} name="child_fn" />
-      <TextInput placeholder="last name" req={true} name="child_ln" />
+      <TextInput placeholder="first name" req={true} name="first_name" />
+      <TextInput placeholder="last name" req={true} name="last_name" />
       <NumberInput startAt={4} endAt={11} name="age" />
       <RadioInput
         value={{ first: "male", second: "female" }}
         valueLabel={{ first: "m", second: "f" }}
         label="gender"
+        name="gender"
       />
     </div>
 
@@ -132,9 +152,17 @@
     <div
       class="form-section-wrapper {currenstSectionClass} {displayStatus.second}"
     >
-      <TextInput placeholder="first name" req={true} name="guardian_fn" />
-      <TextInput placeholder="last name" req={true} name="guardian_ln" />
-      <TextInput placeholder="phone number" type="phone" name="phone" />
+      <TextInput
+        placeholder="first name"
+        req={true}
+        name="guardian_first_name"
+      />
+      <TextInput placeholder="last name" req={true} name="guardian_last_name" />
+      <TextInput
+        placeholder="phone number"
+        type="phone"
+        name="guardian_phone_number"
+      />
       <Parragraph
         text="is someone else allowed to pick up your child?"
         font="f-secondary"
@@ -144,6 +172,8 @@
       <RadioInput
         value={{ first: "yes", second: "no" }}
         valueLabel={{ first: "y", second: "n" }}
+        name="allow_third_party_pick_up"
+        req={true}
         on:action={handlePickupChildOption}
       />
 
@@ -158,12 +188,12 @@
         <TextInput
           placeholder="first name"
           req={true}
-          name="second_guardia_fn"
+          name="second_guardian_first_name"
         />
         <TextInput
           placeholder="last name"
           req={true}
-          name="second_guardia_ln"
+          name="second_guardian_last_name"
         />
       {/if}
     </div>
@@ -177,14 +207,14 @@
           on:uploadDone={() => (displaySubmitForm = true)}
           defaultImgSource="images/icons/profile.png"
           btnText="submit photo"
-          name="child_photo"
+          name="photo"
         />
       </div>
     </div>
 
     {#if displaySubmitForm && currentSection === 2}
       <div class="button-wrapper_fwd">
-        <Primary text="Done" type="submit" on:action={handleFormSubmission} />
+        <Primary text="Done" on:action={handleFormSubmission} />
       </div>
     {/if}
   </form>

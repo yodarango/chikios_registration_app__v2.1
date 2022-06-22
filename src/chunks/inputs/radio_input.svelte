@@ -14,6 +14,7 @@
   export let valueLabel: TinputValues = { first: "", second: "" };
   export const action: MouseEvent | null = null;
   export let req: boolean = true;
+  export let name: string;
 
   // states
   let selectedInput: TselectedInput = {
@@ -43,7 +44,7 @@
     <input
       type="radio"
       id="input-option"
-      name="input-option"
+      {name}
       value={value.first}
       checked={selectedInput.first}
       required
@@ -51,7 +52,7 @@
     <input
       type="radio"
       id="input-option"
-      name="input-option"
+      {name}
       value={value.second}
       checked={selectedInput.second}
       required
@@ -170,7 +171,7 @@
     bottom: 0;
     left: 0;
     background-size: contain;
-    background-image: url("images/icons/check_x.png");
+    background-image: url("images/icons/checkx.png");
     display: none;
   }
 
