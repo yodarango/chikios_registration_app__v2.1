@@ -25,7 +25,8 @@
     width,
     height,
     type: "svg",
-    data: `https://chikios.biblescholar.app/${organizationId}/${childId}`,
+    //data: `https://chikios.biblescholar.app/${organizationId}/${childId}`,
+    data: `https://chikios.biblescholar.app/admin/${childId}`,
     image,
     dotsOptions: {
       // color: dotColor,

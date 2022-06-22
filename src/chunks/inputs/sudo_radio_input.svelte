@@ -4,83 +4,49 @@
   const dispatch = createEventDispatcher();
 
   // types
-  type TselectedInputColor = { first: string; second: string };
-  type TselectedInput = { first: boolean; second: boolean };
   type TinputValues = { first: string; second: string };
+  type TinputValuesBool = { first: boolean; second: boolean };
 
   //props
-  export let value: TinputValues = { first: "", second: "" };
+  export let name: string;
   export let label: string = "";
   export let valueLabel: TinputValues = { first: "", second: "" };
   export const action: MouseEvent | null = null;
   export let req: boolean = true;
-  export let name: string;
+  export let inputValues: TinputValues;
 
   // states
-  let selectedInput: TselectedInput = {
-    first: false,
-    second: false,
+  let selectedInput: TinputValues = {
+    first: inputValues.first,
+    second: "",
   };
-  let selectedoptionColor: TselectedInputColor = {
-    first: "",
+  let selectedoptionColor: TinputValues = {
+    first: "selected",
     second: "",
   };
 
   // -------- handle the option choice
   const handleoptionChoice = (option: number) => {
-    option === 1
-      ? ((selectedoptionColor = { first: "selected", second: "" }),
-        (selectedInput = { first: true, second: false }))
-      : ((selectedoptionColor = { first: "", second: "selected" }),
-        (selectedInput = { first: false, second: true }));
+    if (option === 1) {
+      selectedoptionColor = { first: "selected", second: "" };
+      selectedInput = { first: inputValues.first, second: "" };
+    } else {
+      selectedoptionColor = { first: "", second: "selected" };
+      selectedInput = { first: "", second: inputValues.second };
+    }
 
     dispatch("action", { option });
   };
 </script>
 
-<!-------------- hidden input --------------->
-<div class="input-wrapper">
-  {#if req}
-    <input
-      type="radio"
-      id="input-option"
-      {name}
-      value={value.first}
-      checked={selectedInput.first}
-      required
-    />
-    <input
-      type="radio"
-      id="input-option"
-      {name}
-      value={value.second}
-      checked={selectedInput.second}
-      required
-    />
-  {:else}
-    <input
-      type="radio"
-      id="input-option"
-      name="input-option"
-      value={value.first}
-      checked={selectedInput.first}
-    />
-    <input
-      type="radio"
-      id="input-option"
-      name="input-option"
-      value={value.second}
-      checked={selectedInput.second}
-    />
-  {/if}
-</div>
-
-<!-------------- Visible input--------------->
+<!---------------------------------- Visible input ------------------------------------------>
 <div
   class="input-interface-wrapper std-flex-justify-start std-flex-align-end std-flex-nowrap"
 >
   {#if label}
-    <p class="option-option-label">{label}:</p>
+    <p class="option-option-label" for="input-option">
+      {label}:
+    </p>
   {/if}
 
   <!--------------first option option --------------->
@@ -88,7 +54,28 @@
     <span
       class="std-bkg std-icon option-selected {selectedoptionColor.first}"
     />
-    <p class="option-letter {selectedoptionColor.first}">{valueLabel.first}</p>
+    {#if req && selectedInput.first !== ""}
+      <input
+        type="text"
+        id="option-one"
+        value={selectedInput.first}
+        {name}
+        class="hidden"
+        required
+      />
+    {:else if !req && selectedInput.first !== ""}
+      <input
+        type="text"
+        id="option-one"
+        value={selectedInput.first}
+        {name}
+        class="hidden"
+      />
+    {/if}
+
+    <p class="option-letter {selectedoptionColor.first}">
+      {valueLabel.first}
+    </p>
     <div class="svg-wrapper">
       <svg>
         <path
@@ -106,6 +93,23 @@
     <span
       class="std-bkg std-icon option-selected {selectedoptionColor.second}"
     />
+    {#if req && selectedInput.second !== ""}
+      <input
+        type="text"
+        id="option-two"
+        value={selectedInput.second}
+        {name}
+        class="hidden"
+      />
+    {:else if !req && selectedInput.second !== ""}
+      <input
+        type="text"
+        id="option-two"
+        value={selectedInput.second}
+        {name}
+        class="hidden"
+      />
+    {/if}
     <p class="option-letter {selectedoptionColor.second}">
       {valueLabel.second}
     </p>
@@ -135,6 +139,10 @@
   .input-interface-wrapper {
     width: 100%;
     margin: var(--medium-spacing) auto;
+  }
+
+  .hidden {
+    display: none;
   }
 
   .option-option-label {
@@ -171,7 +179,7 @@
     bottom: 0;
     left: 0;
     background-size: contain;
-    background-image: url("images/icons/checkx.png");
+    background-image: url("../../../public/images/icons/check_x.png");
     display: none;
   }
 

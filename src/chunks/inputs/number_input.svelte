@@ -53,7 +53,7 @@
     <!---------- age dropdown --------->
     <div class="age-dropdown {ageDPdisplay}">
       {#each new Array(endAt) as age, i}
-        <p class="std-flex-row" on:click={() => handleSelectAge(i + 1)}>
+        <p class="std-flex-row" on:click={() => handleSelectAge(i + startAt)}>
           {i + startAt}
         </p>
       {/each}

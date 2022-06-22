@@ -9,13 +9,13 @@
   export let defaultImgSource: string = "";
   export let req: boolean = true;
   export let name: string;
+  export let alt: string;
 
   // components
   import Secondary from "../buttons/secondary.svelte";
 
   // states
   let blobImage: string = defaultImgSource;
-  let alt: string = "content";
   let imageBlobInput: string = "";
 
   // DOM Elements

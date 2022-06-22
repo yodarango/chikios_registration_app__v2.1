@@ -18,7 +18,7 @@
   export let currentTitle: string = "child";
 
   // components
-  import RadioInput from "../../chunks/inputs/radio_input.svelte";
+  import RadioInput from "../../chunks/inputs/sudo_radio_input.svelte";
   import NumberInput from "../../chunks/inputs/number_input.svelte";
   import TextInput from "../../chunks/inputs/text_input.svelte";
   import Primary from "../../chunks/buttons/primary.svelte";
@@ -29,8 +29,8 @@
   // states
   let currentSection: number = 0;
   let currenstSectionClass: string = "";
-  let allowOtherPickUpParty: boolean = false;
-  let displaySubmitForm: boolean = false;
+  let allowOtherPickUpParty: boolean = true;
+  let displaySubmitForm: boolean = true;
   let displayStatus: TdisplayStatus = {
     first: "display",
     second: "",
@@ -100,6 +100,7 @@
   const handlePickupChildOption = (evt) => {
     const chosenOption = evt.detail.option;
 
+    console.log("event", chosenOption);
     chosenOption === 1
       ? (allowOtherPickUpParty = true)
       : (allowOtherPickUpParty = false);
@@ -110,22 +111,19 @@
     const formData = { first_name: "" };
     for (let i = 0; i < inputs.length; i++) {
       if (!inputs[i].value) {
-        alert(`${inputs[i].placeholder} is required`);
+        alert(`Please make sure all fields are filled out!`);
         return;
       }
+
       formData[inputs[i].name] = inputs[i].value;
     }
-    const response = await postReq(
-      "http://localhost:4000/kids/register",
-      formData,
-      true
-    );
+
+    const response = await postReq("/kids/register", formData, true);
 
     if (response.id) {
       formData["id"] = response.id;
       dispatch("registration_success", formData);
       currentTitle = formData.first_name;
-      console.log(response);
     }
   };
 </script>
@@ -141,7 +139,7 @@
       <TextInput placeholder="last name" req={true} name="last_name" />
       <NumberInput startAt={4} endAt={11} name="age" />
       <RadioInput
-        value={{ first: "male", second: "female" }}
+        inputValues={{ first: "male", second: "female" }}
         valueLabel={{ first: "m", second: "f" }}
         label="gender"
         name="gender"
@@ -170,7 +168,7 @@
         align="left"
       />
       <RadioInput
-        value={{ first: "yes", second: "no" }}
+        inputValues={{ first: "yes", second: "no" }}
         valueLabel={{ first: "y", second: "n" }}
         name="allow_third_party_pick_up"
         req={true}
@@ -202,12 +200,13 @@
     <div
       class="form-section-wrapper {currenstSectionClass} {displayStatus.third}"
     >
+      <!-- on:ddoneUploading not currently working on iOs. removing it for now unitl I find cause -->
       <div class="input-image-wrapper">
         <ImageInput
-          on:uploadDone={() => (displaySubmitForm = true)}
           defaultImgSource="images/icons/profile.png"
           btnText="submit photo"
           name="photo"
+          alt="portrait or person"
         />
       </div>
     </div>
