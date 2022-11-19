@@ -1,6 +1,21 @@
 <script lang="ts">
 let thirdpartycanpickup:boolean = false;
 
+  const handleThumbnail = async (e: any, index: any, id: any) => {
+    setthumbnailState([
+      ...thumbnailState,
+      (thumbnailState[index].url =
+        "assets/images/img_placeholder_uploading.png"),
+    ]);
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      let thumbnail: any = reader.result;
+      uploadImg({ id, url: thumbnail }, index);
+    };
+    reader.readAsDataURL(e.target.files[0]);
+  };
+
 </script>
 
 <div class="card">
@@ -62,6 +77,45 @@ let thirdpartycanpickup:boolean = false;
         <input type="text" name="second_guardian_last_name" max-length={100} placeholder="last name"/>
     </div>
     {/if}
+
+    <div class="input-wrapper">
+  <div class="image-wrapper">
+    <img
+      src={blobImage}
+      {alt}
+      class="photo-preview"
+      on:load={handleImageCompression}
+    />
+  </div>
+
+  <div class="button-wrapper">
+    <Secondary text={btnText} on:action={triggerUpload} />
+  </div>
+
+  <!------------- hidden inputs ------------>
+  <input
+    type="file"
+    id="img-input"
+    accept="image/*"
+    on:change={handleThumbnail}
+    hidden
+    name="original_image"
+  />
+  {#if req}
+    <input
+      type="text"
+      class="hidden-input"
+      value={imageBlobInput}
+      {name}
+      required
+    />
+  {:else}
+    <input type="text" class="hidden-input" value={imageBlobInput} {name} />
+  {/if}
+
+  <canvas id="canvas" class="hidden" />
+</div>
+
 </div>
 
 
