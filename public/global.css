@@ -1,11 +1,14 @@
 /* ------------------------ GENERAL STYLES --------------------------  */
 @import url("https://use.typekit.net/yex2atj.css");
+@import url("https://fonts.googleapis.com/css2?family=Lemon&display=swap");
 
 :root {
   /*-------------- Fonts----------*/
   --primary-font: 400 2rem fredericka-the-greatest, serif;
   --secondary-font: 500 italic 2.5rem swister, sans-serif; /* 700 */
   --accent-font: 700 2.83rem acumin-pro, sans-serif;
+  /* rushed theme: splash of fun */
+  --fourth-font: "Lemon", cursive;
 
   /*------------- Colors ---------------*/
   --primary-color: #5b7fff;
