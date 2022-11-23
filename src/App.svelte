@@ -1,17 +1,14 @@
 <script lang="ts">
   // components
   import Home from "./pages/home.svelte";
-  import Simple from "./pages/simple.svelte";
 
   // states
   let bkgImage: string = "./images/bkgs/crumbled-paper_v.png";
-  let bkgImage2: string = "./images/bkgs/water_bkg.png";
 </script>
 
-<div class="background std-bkg" style="background-image: url('{bkgImage2}')" />
+<div class="background std-bkg" style="background-image: url('{bkgImage}')" />
 <main class="main-wrapper">
-  <!-- <Home /> -->
-  <Simple />
+  <Home />
 </main>
 
 <style>

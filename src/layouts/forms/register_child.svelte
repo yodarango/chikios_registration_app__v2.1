@@ -36,7 +36,7 @@
     second: "",
     third: "",
   };
-
+  let loading;
   // DOM Refs
   let inputs: any;
   let form: any;
@@ -108,6 +108,7 @@
 
   // ----------- handle form submission and child registration
   const handleFormSubmission = async () => {
+    loading = true;
     const formData = { first_name: "" };
     for (let i = 0; i < inputs.length; i++) {
       if (!inputs[i].value) {
@@ -121,6 +122,7 @@
     const response = await postReq("/kids/register", formData, true);
 
     if (response.id) {
+      loading = false;
       formData["id"] = response.id;
       dispatch("registration_success", formData);
       currentTitle = formData.first_name;
@@ -204,7 +206,7 @@
       <div class="input-image-wrapper">
         <ImageInput
           defaultImgSource="images/icons/profile.png"
-          btnText="submit photo"
+          btnText={loading ? "Registering..." : "submit photo"}
           name="photo"
           alt="portrait or person"
         />
@@ -213,7 +215,9 @@
 
     {#if displaySubmitForm && currentSection === 2}
       <div class="button-wrapper_fwd">
-        <Primary text="Done" on:action={handleFormSubmission} />
+        {#if !loading}
+          <Primary text="Done" on:action={handleFormSubmission} />
+        {/if}
       </div>
     {/if}
   </form>
